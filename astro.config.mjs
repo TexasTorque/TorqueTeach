@@ -26,35 +26,42 @@ export default defineConfig({
         },
         {
           label: "Subteams",
-          items: [
-            { label: "Programming", slug: "subteams/programming" },
-            { label: "Electrical", slug: "subteams/electrical" },
+          items: [  
+            { label: "Programming", items: [
+              {autogenerate: {directory: "subteams/programming" }}
+            ] },
+            { label: "Electrical", items: [
+              {autogenerate: {directory: "subteams/electrical" }}
+            ] },
             {
               label: "Mechanical",
               items: [
-                { label: "Design", slug: "subteams/mechanical/design" },
+                { label: "Design", items:[
+                  {autogenerate: {directory: "subteams/mechanical/design" }}
+                ] },
                 {
                   label: "Fabrication",
                   items: [
-                    {
-                      label: "Machines",
-                      slug: "subteams/mechanical/fabrication/machines",
-                    },
-                    {
-                      label: "CAM",
-                      slug: "subteams/mechanical/fabrication/cam",
-                    },
+                    {autogenerate: {directory: "subteams/mechanical/fabrication" }},
                   ],
                 },
-                { label: "Assembly", slug: "subteams/mechanical/assembly" },
+                { label: "Assembly", items: [
+                  {autogenerate: {directory: "subteams/mechanical/assembly" }}
+                ] },
               ],
             },
             {
               label: "Business",
               items: [
-                { label: "Media", slug: "subteams/business/media" },
-                { label: "Awards", slug: "subteams/business/awards" },
-                { label: "Outreach", slug: "subteams/business/outreach" },
+                { label: "Media", items: [
+                  {autogenerate: {directory: "subteams/business/media" }}
+                ] },
+                { label: "Awards", items: [
+                  {autogenerate: {directory: "subteams/business/awards" }}
+                ] },
+                { label: "Outreach", items: [
+                  {autogenerate: {directory: "subteams/business/outreach" }}
+                ] },
               ],
             },
           ],
@@ -62,8 +69,12 @@ export default defineConfig({
         {
           label: "Strategy",
           items: [
-            { label: "Scouting", slug: "strategy/scouting" },
-            { label: "Analysis", slug: "strategy/analysis" },
+            { label: "Scouting", items: [
+              {autogenerate: {directory: "strategy/scouting" }}
+            ] },
+            { label: "Analysis", items: [
+              {autogenerate: {directory: "strategy/analysis" }}
+            ] },
           ],
         },
       ],
