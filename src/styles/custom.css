@@ -1,0 +1,16 @@
+/* src/styles/custom.css */
+.site-title {
+    color: var(--sl-color-bg2) !important;
+}
+
+:root[data-theme='light'] {
+  --sl-color-accent: #4C50F4;
+  --sl-color-bg: #ffffff;
+  --sl-color-bg2: #17181C;
+}
+
+:root[data-theme='dark'] {
+  --sl-color-accent: #B8C7FF;
+  --sl-color-bg: #17181C;
+  --sl-color-bg2: #ffffff;
+}

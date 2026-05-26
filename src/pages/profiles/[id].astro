@@ -1,0 +1,17 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import AnchorHeading from '@astrojs/starlight/components/AnchorHeading.astro';
+import UserProfile from '../../components/UserProfile.tsx';
+
+const { id } = Astro.params;
+---
+
+<StarlightPage frontmatter={{ title: `Profile` }}>
+  
+  <AnchorHeading level="2" id="profile-info">
+    Profile Information
+  </AnchorHeading>
+
+  <UserProfile client:load userId={id} />
+
+</StarlightPage>

@@ -1,13 +1,32 @@
 // @ts-check
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
+import react from '@astrojs/react';
+import node from '@astrojs/node';
+import starlightVideos from 'starlight-videos'
+
 
 // https://astro.build/config
 export default defineConfig({
   site: "https://teach.texastorque.org",
+  output: "server",
+
+  adapter: node({
+    mode: "standalone"
+  }),
+
   integrations: [
     starlight({
+      plugins: [starlightVideos()],
+
       title: "Torque Teach",
+      components: {
+        Header: "./src/components/header.astro"
+      },
+      customCss: [
+        // Path to your custom CSS file
+        './src/styles/custom.css',
+      ],
       editLink: {
         baseUrl:
           "https://github.com/TexasTorque/TorqueTeach/edit/master/src/content/docs/",
@@ -77,7 +96,18 @@ export default defineConfig({
             ] },
           ],
         },
+        {
+          label: "Profile",
+          items: [{ label: "Account", slug: "profile" }]
+        },
       ],
     }),
+    react()
   ],
+  
+  vite: {
+      resolve: {
+        dedupe: ["react", "react-dom", "react-dom/server"],
+      },
+    }
 });
