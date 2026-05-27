@@ -19,18 +19,21 @@ export default function AdminPanel() {
     // search
     if (search.trim()) {
       result = result.filter((u) =>
-        u.userName?.toLowerCase()
+        (u.userName ?? "").toLowerCase()
           .includes(search.toLowerCase())
       );
     }
 
     // sort
     result.sort((a, b) => {
-      let av = a[sortField] ?? 0;
-      let bv = b[sortField] ?? 0;
+      const rawAv = a[sortField];
+      const rawBv = b[sortField];
+      const isTextSort = typeof rawAv === "string" || typeof rawBv === "string";
+      const av = isTextSort ? (rawAv ?? "") : (rawAv ?? 0);
+      const bv = isTextSort ? (rawBv ?? "") : (rawBv ?? 0);
 
       // text sort
-      if (typeof av === "string") {
+      if (isTextSort) {
         return descending
           ? bv.localeCompare(av)
           : av.localeCompare(bv);
