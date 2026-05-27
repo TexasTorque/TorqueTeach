@@ -1,46 +1,87 @@
 import { useEffect, useState } from "react";
 import { account, tables, DATABASE_ID, COLLECTIONS } from "../lib/appwrite";
 import { Query } from "appwrite";
-import { updateLevel, type LevelField} from "../lib/updateLevel";
+import { updateLevel, type LevelField } from "../lib/updateLevel";
 import { isAdmin as checkAdmin } from "../lib/isAdmin";
 
-type Props = {
-  userId?: string;
-};
-
-export default function UserProfile({ userId }: Props) {
+export default function UserProfile() {
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<any>(null);
   const [quizzes, setQuizzes] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [admin, setAdmin] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
 
+  // ─────────────────────────────
+  // RESOLVE USER ID
+  // ─────────────────────────────
   useEffect(() => {
+    let alive = true;
+
+    async function resolveUserId() {
+      try {
+        const params = new URLSearchParams(window.location.search);
+
+        // admin-selected profile
+        const urlUserId = params.get("userId");
+
+        if (urlUserId) {
+          if (alive) {
+            setUserId(urlUserId);
+          }
+          return;
+        }
+
+        // fallback = current logged in user
+        const user = await account.get();
+
+        if (!alive) return;
+
+        setUserId(user.$id);
+
+      } catch (err) {
+        console.error("Failed to resolve user:", err);
+
+        if (alive) {
+          setUserId(null);
+          setLoading(false);
+        }
+      }
+    }
+
+    resolveUserId();
+
+    return () => {
+      alive = false;
+    };
+
+  }, []);
+
+  // ─────────────────────────────
+  // MAIN LOAD
+  // ─────────────────────────────
+  useEffect(() => {
+    if (!userId) return;
+
     let alive = true;
 
     async function run() {
       try {
-        // ✔ FIXED: proper async admin check
-        const isUserAdmin = await checkAdmin();
-        if (!alive) return;
-        setAdmin(isUserAdmin);
+        setLoading(true);
 
-        let targetUserId: string;
+        const targetUserId = userId;
 
-        if (userId) {
-          targetUserId = userId;
-        } else {
-          try {
-            const user = await account.get();
-            targetUserId = user.$id;
-          } catch {
-            if (alive) {
-              setProfile(null);
-              setLoading(false);
-            }
-            return;
-          }
+        if (!targetUserId) {
+          setLoading(false);
+          return;
         }
+
+        // admin check
+        const isUserAdmin = await checkAdmin();
+
+        if (!alive) return;
+
+        setAdmin(isUserAdmin);
 
         // ─────────────────────────────
         // PROFILE FETCH
@@ -52,7 +93,9 @@ export default function UserProfile({ userId }: Props) {
         });
 
         const row = result.rows?.[0] ?? null;
+
         if (!alive) return;
+
         setProfile(row);
 
         // ─────────────────────────────
@@ -80,11 +123,18 @@ export default function UserProfile({ userId }: Props) {
         if (!alive) return;
 
         setQuizzes(Object.values(latestPerQuiz));
+
       } catch (err: any) {
         console.error("PROFILE ERROR:", err);
-        if (alive) setError(err.message ?? "Unknown error");
+
+        if (alive) {
+          setError(err.message ?? "Unknown error");
+        }
+
       } finally {
-        if (alive) setLoading(false);
+        if (alive) {
+          setLoading(false);
+        }
       }
     }
 
@@ -93,55 +143,71 @@ export default function UserProfile({ userId }: Props) {
     return () => {
       alive = false;
     };
-  }, [userId]);
 
-  // ─────────────────────────────
-  // LOADING / ERROR STATES
-  // ─────────────────────────────
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p style={{ color: "red" }}>{error}</p>;
-  if (!profile) return <p>No profile found</p>;
+  }, [userId]);
 
   // ─────────────────────────────
   // LEVEL UPDATE HANDLER
   // ─────────────────────────────
   async function changeLevel(field: LevelField, delta: number) {
-  if (!admin || !profile) return;
+    if (!admin || !profile) return;
 
-  const current = profile[field] ?? 0;
-  const next = Math.max(current + delta, 0);
-  const profileId = profile.$id;
+    const current = profile[field] ?? 0;
+    const next = Math.max(current + delta, 0);
 
-  // optimistic update
-  setProfile((prev: any) => ({
-    ...prev,
-    [field]: next
-  }));
+    const profileId = profile.$id;
 
-  try {
-    await updateLevel(profileId, field, next);
-  } catch (err) {
-    console.error("Failed to update level:", err);
-
-    // rollback
+    // optimistic update
     setProfile((prev: any) => ({
       ...prev,
-      [field]: current
+      [field]: next
     }));
+
+    try {
+      await updateLevel(profileId, field, next);
+
+    } catch (err) {
+      console.error("Failed to update level:", err);
+
+      // rollback
+      setProfile((prev: any) => ({
+        ...prev,
+        [field]: current
+      }));
+    }
   }
-}
+
+  // ─────────────────────────────
+  // LEVEL FIELDS
+  // ─────────────────────────────
   const levelFields: LevelField[] = [
-      "electricalLevel",
-      "assemblyLevel",
-      "designLevel",
-      "machiningLevel",
-      "programmingLevel",
-      "awardsLevel",
-      "mediaLevel",
-      "outreachLevel",
-      "scoutingLevel",
-      "safetyLevel"
-    ];
+    "electricalLevel",
+    "assemblyLevel",
+    "designLevel",
+    "machiningLevel",
+    "programmingLevel",
+    "awardsLevel",
+    "mediaLevel",
+    "outreachLevel",
+    "scoutingLevel",
+    "safetyLevel"
+  ];
+
+  // ─────────────────────────────
+  // STATES
+  // ─────────────────────────────
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+  if (error) {
+    return <p style={{ color: "red" }}>{error}</p>;
+  }
+
+  if (!profile) {
+    return <p>No profile found</p>;
+  }
+
   // ─────────────────────────────
   // UI
   // ─────────────────────────────
@@ -156,20 +222,35 @@ export default function UserProfile({ userId }: Props) {
     >
       <h1>{profile.userName}</h1>
 
-      <h2 style={{ marginTop: "1rem" }}>Levels</h2>
+      <h2 style={{ marginTop: "1rem" }}>
+        Levels
+      </h2>
 
       <table style={{ width: "100%", marginTop: "0.5rem" }}>
         <tbody>
-            {levelFields.map((field) => (
+
+          {levelFields.map((field) => (
+
             <tr key={field}>
-              <td>{field.replace("Level", "")}</td>
+
+              <td>
+                {field.replace("Level", "")}
+              </td>
 
               <td>
                 {profile[field] ?? 0}
 
                 {admin && (
-                  <span style={{ marginLeft: "10px", display: "inline", gap: "12px", alignItems: "center" }}>
-                    <button onClick={() => changeLevel(field, +1)}
+                  <span
+                    style={{
+                      marginLeft: "10px",
+                      display: "inline",
+                      alignItems: "center"
+                    }}
+                  >
+
+                    <button
+                      onClick={() => changeLevel(field, +1)}
                       style={{
                         backgroundColor: "var(--sl-color-accent)",
                         fontWeight: "bold",
@@ -184,8 +265,14 @@ export default function UserProfile({ userId }: Props) {
                         textAlign: "center",
                         display: "inline-flex",
                         justifyContent: "center",
-                      }}>+</button>
-                    <button onClick={() => changeLevel(field, -1)}
+                        alignItems: "center"
+                      }}
+                    >
+                      +
+                    </button>
+
+                    <button
+                      onClick={() => changeLevel(field, -1)}
                       style={{
                         backgroundColor: "var(--sl-color-accent)",
                         fontWeight: "bold",
@@ -199,29 +286,55 @@ export default function UserProfile({ userId }: Props) {
                         lineHeight: "28px",
                         textAlign: "center",
                         display: "inline-flex",
-                        justifyContent: "center"
-                      }}>-</button>
+                        justifyContent: "center",
+                        alignItems: "center"
+                      }}
+                    >
+                      -
+                    </button>
+
                   </span>
                 )}
+
               </td>
+
             </tr>
+
           ))}
+
         </tbody>
       </table>
 
-      <h2 style={{ marginTop: "1rem" }}>Quizzes</h2>
+      <h2 style={{ marginTop: "1rem" }}>
+        Quizzes
+      </h2>
 
       <table style={{ width: "100%", marginTop: "0.5rem" }}>
         <tbody>
+
           {quizzes.map((q) => (
+
             <tr key={q.$id ?? q.quizID}>
-              <td>{q.quizID}</td>
-              <td>{q.score}%</td>
-              <td>{new Date(q.$createdAt).toLocaleDateString()}</td>
+
+              <td>
+                {q.quizID}
+              </td>
+
+              <td>
+                {q.score}%
+              </td>
+
+              <td>
+                {new Date(q.$createdAt).toLocaleDateString()}
+              </td>
+
             </tr>
+
           ))}
+
         </tbody>
       </table>
+
     </div>
   );
 }

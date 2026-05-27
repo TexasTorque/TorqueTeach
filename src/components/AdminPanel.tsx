@@ -222,7 +222,7 @@ export default function AdminPanel() {
           <tr key={u.$id}>
 
             <td>
-              <a href={`/profiles/${u.userID}`}>
+              <a href={`/profiles?userId=${u.userID}`}>
                 {u.userName}
               </a>
             </td>

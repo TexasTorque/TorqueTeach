@@ -9,7 +9,7 @@ import starlightVideos from 'starlight-videos'
 // https://astro.build/config
 export default defineConfig({
   site: "https://teach.texastorque.org",
-  output: "server",
+  output: "static",
 
   adapter: node({
     mode: "standalone"
