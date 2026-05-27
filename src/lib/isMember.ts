@@ -14,11 +14,11 @@ export async function isMember(): Promise<boolean> {
     const user = await account.get();
     if (!user) return false;
 
-    // 2. Get memberships of this user ONLY for the member team
-    const memberships = await teams.listMemberships(MEMBER_TEAM_ID);
+    // 2. Get the current user's teams
+    const teamList = await teams.list();
 
-    // 3. If user appears in that team → member
-    return memberships.memberships.length > 0;
+    // 3. Return true only if the current user belongs to the member team
+    return teamList.teams.some((team) => team.$id === MEMBER_TEAM_ID);
   } catch (err) {
     // If user is not logged in OR request fails → not member
     return false;
