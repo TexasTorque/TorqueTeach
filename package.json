@@ -16,7 +16,6 @@
     "@astrojs/starlight": "^0.39.2",
     "appwrite": "^25.1.1",
     "astro": "^6.3.7",
-    "node-appwrite": "^25.1.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "sharp": "^0.34.5",
