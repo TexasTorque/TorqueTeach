@@ -165,7 +165,7 @@ export default function UserProfile({ userId }: Props) {
                         lineHeight: "28px",
                         textAlign: "center",
                         display: "inline-flex",
-                        justifyContent: "center"
+                        justifyContent: "center",
                       }}>+</button>
                     <button onClick={() => changeLevel(field, -1)}
                       style={{
