@@ -22,19 +22,24 @@ import AdminShortcut from "../../components/AdminShortcut.tsx";
     borderCollapse: "collapse"
   }}
 >
-    <td style={{ verticalAlign: "middle" }}>
+  <tbody>
+    <tr>
+      <td style={{ verticalAlign: "middle" }}>
         <span
-        style={{
+          style={{
             marginLeft: "10px",
             display: "inline-flex",
             gap: "8px",
             alignItems: "center",
             verticalAlign: "center"
-        }}
-        >  <HeaderAuth client:only="react" />
-        <AdminShortcut client:only="react" />
+          }}
+        >
+          <HeaderAuth client:only="react" />
+          <AdminShortcut client:only="react" />
         </span>
-    </td>
+      </td>
+    </tr>
+  </tbody>
 </table>
 </div>
 
