@@ -100,16 +100,30 @@ export default function UserProfile({ userId }: Props) {
   async function changeLevel(field: string, delta: number) {
     if (!admin) return;
 
-    const current = profile[field] ?? 0;
-    const next = Math.max(current + delta, 0);
+    let current = 0;
+    let next = 0;
+    let profileId: string | null = null;
 
-    setProfile({ ...profile, [field]: next });
+    setProfile((prev: any) => {
+      if (!prev) return prev;
+
+      current = prev[field] ?? 0;
+      next = Math.max(current + delta, 0);
+      profileId = prev.$id;
+
+      return { ...prev, [field]: next };
+    });
+
+    if (!profileId) return;
 
     try {
-      await updateLevel(profile.$id, field, next);
+      await updateLevel(profileId, field, next);
     } catch (err) {
       console.error("Failed to update level:", err);
-      setProfile({ ...profile, [field]: current });
+      setProfile((prev: any) => {
+        if (!prev || prev.$id !== profileId) return prev;
+        return { ...prev, [field]: current };
+      });
     }
   }
 
