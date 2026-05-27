@@ -76,10 +76,13 @@ useEffect(() => {
           style={{
             backgroundColor: "var(--sl-color-accent)",
             color: "var(--sl-color-bg)",
-            border: "none",
-            padding: "6px 12px",
+            border: "2px solid var(--sl-color-bg)",
             borderRadius: "6px",
-            cursor: "pointer"
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "6px 12px"
           }}>Logout
         </button>
       ) : (
@@ -87,10 +90,13 @@ useEffect(() => {
           style={{
             backgroundColor: "var(--sl-color-accent)",
             color: "var(--sl-color-bg)",
-            border: "none",
-            padding: "6px 12px",
+            border: "2px solid var(--sl-color-bg)",
             borderRadius: "6px",
-            cursor: "pointer"
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "6px 12px"
           }}>Login
         </button>
       )}

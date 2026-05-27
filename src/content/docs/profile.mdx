@@ -3,5 +3,39 @@ title: My Profile
 ---
 
 import UserProfile from "../../components/UserProfile.tsx";
+import HeaderAuth from "../../components/headerAuth.tsx";
+import AdminShortcut from "../../components/AdminShortcut.tsx";
 
-<UserProfile client:only="react" /> 
+<div
+  style={{
+    display: "flex",
+    gap: "1rem",
+    marginBottom: "1.5rem",
+    alignItems: "center",
+    flexWrap: "wrap"
+  }}
+>
+<table
+  style={{
+    width: "100%",
+    marginTop: "0.5rem",
+    borderCollapse: "collapse"
+  }}
+>
+    <td style={{ verticalAlign: "middle" }}>
+        <span
+        style={{
+            marginLeft: "10px",
+            display: "inline-flex",
+            gap: "8px",
+            alignItems: "center",
+            verticalAlign: "center"
+        }}
+        >  <HeaderAuth client:only="react" />
+        <AdminShortcut client:only="react" />
+        </span>
+    </td>
+</table>
+</div>
+
+<UserProfile client:only="react" />

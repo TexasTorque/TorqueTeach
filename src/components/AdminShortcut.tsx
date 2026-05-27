@@ -37,14 +37,14 @@ export default function AdminShortcut() {
     <a
       href="/adminpanel"
       style={{
-        display: "inline-block",
-        marginTop: "12px",
-        padding: "10px 14px",
+        display: "inline-flex",
+        padding: "6px 12px",
         background: "var(--sl-color-accent)",
         color: "var(--sl-color-bg)",
-        borderRadius: "8px",
-        fontWeight: 600,
-        textDecoration: "none"
+        borderRadius: "6px",
+        textDecoration: "none",
+        alignItems: "center",
+        marginTop: "1.95rem"
       }}
     >
       Admin Panel
