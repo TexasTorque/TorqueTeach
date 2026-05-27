@@ -184,6 +184,31 @@ export default function AdminPanel() {
             <td>
               Programming: {u.programmingLevel ?? 0}
             </td>
+            <td>
+              Assembly: {u.assemblyLevel ?? 0}
+            </td>
+
+            <td>
+              Design: {u.designLevel ?? 0}
+            </td>
+            <td>
+              Machining: {u.machiningLevel ?? 0}
+            </td>
+            <td>
+              Awards: {u.awardsLevel ?? 0}
+            </td>
+            <td>
+              Media: {u.mediaLevel ?? 0}
+            </td>
+            <td>
+              Outreach: {u.outreachLevel ?? 0}
+            </td>
+            <td>
+              Scouting: {u.scoutingLevel ?? 0}
+            </td>
+            <td>
+              Safety: {u.safetyLevel ?? 0}
+            </td>
 
           </tr>
 
