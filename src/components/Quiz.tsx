@@ -39,6 +39,9 @@ function parseQuiz(content: string) {
 
     // Supplementary image
     else if (line.startsWith("IMG ")) {
+      if (!current) {
+        throw new Error(`IMG found before question`);
+      }
       const raw = line.replace("IMG ", "");
       const parts = raw.split("|");
 
@@ -50,6 +53,9 @@ function parseQuiz(content: string) {
 
     // Image option
     else if (line.startsWith("OPTIONIMG ")) {
+      if (!current) {
+        throw new Error(`OPTIONIMG found before question`);
+      }
       const raw = line.replace("OPTIONIMG ", "");
       const parts = raw.split("|");
 
@@ -62,6 +68,9 @@ function parseQuiz(content: string) {
 
     // Text option
     else if (line.startsWith("- ")) {
+      if (!current) {
+        throw new Error(`Option found before question`);
+      }
       current.options.push({
         type: "text",
         value: line.replace("- ", "")
@@ -70,6 +79,9 @@ function parseQuiz(content: string) {
 
     // Answer
     else if (line.startsWith("A ")) {
+      if (!current) {
+        throw new Error(`Answer found before question`);
+      }
       current.answer = line.replace("A ", "");
     }
   }

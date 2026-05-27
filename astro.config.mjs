@@ -2,7 +2,6 @@
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
 import react from '@astrojs/react';
-import node from '@astrojs/node';
 import starlightVideos from 'starlight-videos'
 
 
@@ -10,11 +9,6 @@ import starlightVideos from 'starlight-videos'
 export default defineConfig({
   site: "https://teach.texastorque.org",
   output: "static",
-
-  adapter: node({
-    mode: "standalone"
-  }),
-
   integrations: [
     starlight({
       plugins: [starlightVideos()],

@@ -15,47 +15,53 @@ export default function UserProfile() {
   // ─────────────────────────────
   // RESOLVE USER ID
   // ─────────────────────────────
-  useEffect(() => {
-    let alive = true;
+ useEffect(() => {
+  let alive = true;
 
-    async function resolveUserId() {
-      try {
-        const params = new URLSearchParams(window.location.search);
+  async function resolveUserId() {
+    try {
+      // current logged in user
+      const currentUser = await account.get();
 
-        // admin-selected profile
-        const urlUserId = params.get("userId");
+      if (!alive) return;
 
-        if (urlUserId) {
-          if (alive) {
-            setUserId(urlUserId);
-          }
-          return;
-        }
+      // check admin FIRST
+      const isUserAdmin = await checkAdmin();
 
-        // fallback = current logged in user
-        const user = await account.get();
+      if (!alive) return;
 
-        if (!alive) return;
+      setAdmin(isUserAdmin);
 
-        setUserId(user.$id);
+      const params = new URLSearchParams(window.location.search);
 
-      } catch (err) {
-        console.error("Failed to resolve user:", err);
+      const urlUserId = params.get("userId");
 
-        if (alive) {
-          setUserId(null);
-          setLoading(false);
-        }
+      // ONLY admins can override profile target
+      if (isUserAdmin && urlUserId) {
+        setUserId(urlUserId);
+        return;
+      }
+
+      // everyone else gets own profile only
+      setUserId(currentUser.$id);
+
+    } catch (err) {
+      console.error("Failed to resolve user:", err);
+
+      if (alive) {
+        setUserId(null);
+        setLoading(false);
       }
     }
+  }
 
-    resolveUserId();
+  resolveUserId();
 
-    return () => {
-      alive = false;
-    };
+  return () => {
+    alive = false;
+  };
 
-  }, []);
+}, []);
 
   // ─────────────────────────────
   // MAIN LOAD
@@ -75,14 +81,7 @@ export default function UserProfile() {
           setLoading(false);
           return;
         }
-
-        // admin check
-        const isUserAdmin = await checkAdmin();
-
         if (!alive) return;
-
-        setAdmin(isUserAdmin);
-
         // ─────────────────────────────
         // PROFILE FETCH
         // ─────────────────────────────

@@ -12,11 +12,11 @@ export async function saveQuizAttempt({
   total: number;
 }) {
   const member = await isMember();
-  const user = await account.get();
-
   if (!member) {
     return;
   }
+  const user = await account.get();
+  
   return tables.createRow({
     databaseId: DATABASE_ID,
     tableId: COLLECTIONS.QUIZ_ATTEMPTS,
