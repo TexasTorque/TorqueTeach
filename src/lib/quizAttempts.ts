@@ -25,7 +25,6 @@ export async function saveQuizAttempt({
       userID: user.$id,
       quizID: quizId,
       score: Math.round((score / total) * 100),
-      $createdAt: new Date().toISOString(),
       userName: user.name
     }
 });
