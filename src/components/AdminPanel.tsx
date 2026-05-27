@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { tables, DATABASE_ID, COLLECTIONS } from "../lib/appwrite";
 import { Query } from "appwrite";
+import { isAdmin } from "../lib/isAdmin";
 
 export default function AdminPanel() {
   const [users, setUsers] = useState<any[]>([]);
@@ -8,9 +9,43 @@ export default function AdminPanel() {
   const [search, setSearch] = useState("");
   const [sortField, setSortField] = useState("userName");
   const [descending, setDescending] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [authorized, setAuthorized] = useState(false)
 
   useEffect(() => {
-    loadUsers();
+    let alive = true;
+
+    async function run() {
+      try {
+        const admin = await isAdmin();
+
+        if (!alive) return;
+
+        if (!admin) {
+          setAuthorized(false);
+          setLoading(false);
+          return;
+        }
+
+        setAuthorized(true);
+
+        // only runs if admin
+        await loadUsers();
+
+      } catch (err) {
+        console.error(err);
+      } finally {
+        if (alive) {
+          setLoading(false);
+        }
+      }
+    }
+
+    run();
+
+    return () => {
+      alive = false;
+    };
   }, []);
 
   useEffect(() => {
@@ -19,7 +54,7 @@ export default function AdminPanel() {
     // search
     if (search.trim()) {
       result = result.filter((u) =>
-        (u.userName ?? "").toLowerCase()
+        (u.userName).toLowerCase()
           .includes(search.toLowerCase())
       );
     }
@@ -50,6 +85,7 @@ export default function AdminPanel() {
   }, [users, search, sortField, descending]);
 
   async function loadUsers() {
+
     try {
       const result = await tables.listRows({
         databaseId: DATABASE_ID,
@@ -66,6 +102,17 @@ export default function AdminPanel() {
     }
   }
 
+  if (loading) {
+      return <p>Loading...</p>;
+    }
+
+  if (!authorized) {
+    return (
+      <p style={{ color: "red" }}>
+        Access denied
+      </p>
+    );
+  }
   return (
     <div>
 

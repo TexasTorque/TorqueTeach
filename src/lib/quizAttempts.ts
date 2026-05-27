@@ -1,3 +1,4 @@
+import { ID } from "appwrite";
 import { account, databases, tables, DATABASE_ID, COLLECTIONS } from "./appwrite";
 import { isMember } from "./isMember";
 
@@ -14,13 +15,12 @@ export async function saveQuizAttempt({
   const user = await account.get();
 
   if (!member) {
-      alert("You must be a member to save quiz progress.");
-      return;
+    return;
   }
   return tables.createRow({
     databaseId: DATABASE_ID,
     tableId: COLLECTIONS.QUIZ_ATTEMPTS,
-    rowId: "unique()",
+    rowId: ID.unique(),
     data: {
       userID: user.$id,
       quizID: quizId,

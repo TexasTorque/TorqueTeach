@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { account, tables, DATABASE_ID, COLLECTIONS } from "../lib/appwrite";
 import { Query } from "appwrite";
-import { updateLevel } from "../lib/updateLevel";
+import { updateLevel, type LevelField} from "../lib/updateLevel";
 import { isAdmin as checkAdmin } from "../lib/isAdmin";
 
 type Props = {
@@ -30,8 +30,16 @@ export default function UserProfile({ userId }: Props) {
         if (userId) {
           targetUserId = userId;
         } else {
-          const user = await account.get();
-          targetUserId = user.$id;
+          try {
+            const user = await account.get();
+            targetUserId = user.$id;
+          } catch {
+            if (alive) {
+              setProfile(null);
+              setLoading(false);
+            }
+            return;
+          }
         }
 
         // ─────────────────────────────
@@ -97,36 +105,43 @@ export default function UserProfile({ userId }: Props) {
   // ─────────────────────────────
   // LEVEL UPDATE HANDLER
   // ─────────────────────────────
-  async function changeLevel(field: string, delta: number) {
-    if (!admin) return;
+  async function changeLevel(field: LevelField, delta: number) {
+  if (!admin || !profile) return;
 
-    let current = 0;
-    let next = 0;
-    let profileId: string | null = null;
+  const current = profile[field] ?? 0;
+  const next = Math.max(current + delta, 0);
+  const profileId = profile.$id;
 
-    setProfile((prev: any) => {
-      if (!prev) return prev;
+  // optimistic update
+  setProfile((prev: any) => ({
+    ...prev,
+    [field]: next
+  }));
 
-      current = prev[field] ?? 0;
-      next = Math.max(current + delta, 0);
-      profileId = prev.$id;
+  try {
+    await updateLevel(profileId, field, next);
+  } catch (err) {
+    console.error("Failed to update level:", err);
 
-      return { ...prev, [field]: next };
-    });
-
-    if (!profileId) return;
-
-    try {
-      await updateLevel(profileId, field, next);
-    } catch (err) {
-      console.error("Failed to update level:", err);
-      setProfile((prev: any) => {
-        if (!prev || prev.$id !== profileId) return prev;
-        return { ...prev, [field]: current };
-      });
-    }
+    // rollback
+    setProfile((prev: any) => ({
+      ...prev,
+      [field]: current
+    }));
   }
-
+}
+  const levelFields: LevelField[] = [
+      "electricalLevel",
+      "assemblyLevel",
+      "designLevel",
+      "machiningLevel",
+      "programmingLevel",
+      "awardsLevel",
+      "mediaLevel",
+      "outreachLevel",
+      "scoutingLevel",
+      "safetyLevel"
+    ];
   // ─────────────────────────────
   // UI
   // ─────────────────────────────
@@ -145,18 +160,7 @@ export default function UserProfile({ userId }: Props) {
 
       <table style={{ width: "100%", marginTop: "0.5rem" }}>
         <tbody>
-          {[
-            "electricalLevel",
-            "assemblyLevel",
-            "designLevel",
-            "machiningLevel",
-            "programmingLevel",
-            "awardsLevel",
-            "mediaLevel",
-            "outreachLevel",
-            "scoutingLevel",
-            "safetyLevel"
-          ].map((field) => (
+            {levelFields.map((field) => (
             <tr key={field}>
               <td>{field.replace("Level", "")}</td>
 
@@ -170,7 +174,7 @@ export default function UserProfile({ userId }: Props) {
                         backgroundColor: "var(--sl-color-accent)",
                         fontWeight: "bold",
                         color: "var(--sl-color-bg)",
-                        border: "none",
+                        border: "2px solid var(--sl-color-bg)",
                         padding: "0",
                         borderRadius: "6px",
                         cursor: "pointer",
@@ -186,7 +190,7 @@ export default function UserProfile({ userId }: Props) {
                         backgroundColor: "var(--sl-color-accent)",
                         fontWeight: "bold",
                         color: "var(--sl-color-bg)",
-                        border: "none",
+                        border: "2px solid var(--sl-color-bg)",
                         padding: "0",
                         borderRadius: "6px",
                         cursor: "pointer",

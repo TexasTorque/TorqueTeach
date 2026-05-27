@@ -10,7 +10,7 @@ useEffect(() => {
   async function run() {
     try {
       const u = await account.get().catch(() => null);
-
+      if (!alive) return;
       if (!u) {
         setUser(null);
         return;
