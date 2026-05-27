@@ -1,5 +1,5 @@
 import { ID } from "appwrite";
-import { account, databases, tables, DATABASE_ID, COLLECTIONS } from "./appwrite";
+import { account, tables, DATABASE_ID, COLLECTIONS } from "./appwrite";
 import { isMember } from "./isMember";
 
 export async function saveQuizAttempt({
