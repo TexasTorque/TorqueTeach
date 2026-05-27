@@ -53,13 +53,7 @@ useEffect(() => {
         provider: OAuthProvider.Google,
         success: `${window.location.origin}?oauth=1`, // success
         failure: `${window.location.origin}`      // failure/cancel
-      });    
-      import("../lib/createProfile")
-        .then(({ createProfileIfNeeded }) =>
-          createProfileIfNeeded()
-        )
-        .catch((err) => {});
-  
+      });
     } catch (err: any) {
       console.error("Login failed:", err);
     }
