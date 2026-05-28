@@ -54,7 +54,7 @@ export default function AdminPanel() {
     // search
     if (search.trim()) {
       result = result.filter((u) =>
-        (u.userName).toLowerCase()
+        (u.userName ?? "").toLowerCase()
           .includes(search.toLowerCase())
       );
     }
