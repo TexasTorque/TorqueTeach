@@ -30,8 +30,10 @@ export async function saveQuizAttempt({
     permissions: [
       Permission.update(Role.team(import.meta.env.PUBLIC_APPWRITE_ADMIN_TEAM_ID)),
       Permission.read(Role.team(import.meta.env.PUBLIC_APPWRITE_ADMIN_TEAM_ID)),
+      Permission.create(Role.team(import.meta.env.PUBLIC_APPWRITE_ADMIN_TEAM_ID)),
       Permission.delete(Role.team(import.meta.env.PUBLIC_APPWRITE_ADMIN_TEAM_ID)),
       Permission.read(Role.user(user.$id)),
+      Permission.create(Role.user(user.$id)),
     ]
 
 });

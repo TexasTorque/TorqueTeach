@@ -43,7 +43,9 @@ export async function createProfileIfNeeded() {
         Permission.read(Role.team(ADMIN_TEAM_ID)),
         Permission.update(Role.team(ADMIN_TEAM_ID)),
         Permission.delete(Role.team(ADMIN_TEAM_ID)),
-        Permission.read(Role.user(user.$id))
+        Permission.read(Role.user(user.$id)),
+        Permission.create(Role.user(user.$id)),
+        Permission.create(Role.user(ADMIN_TEAM_ID))
       ]
     });
   }catch (err) {
