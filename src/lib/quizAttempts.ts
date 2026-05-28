@@ -1,6 +1,7 @@
 import { ID, Permission, Role } from "appwrite";
 import { account, tables, DATABASE_ID, COLLECTIONS } from "./appwrite";
 import { isMember } from "./isMember";
+const ADMIN_TEAM_ID = import.meta.env.PUBLIC_APPWRITE_ADMIN_TEAM_ID;
 
 export async function saveQuizAttempt({
   quizId,
@@ -28,11 +29,6 @@ export async function saveQuizAttempt({
       userName: user.name
     },
     permissions: [
-      Permission.update(Role.team(import.meta.env.PUBLIC_APPWRITE_ADMIN_TEAM_ID)),
-      Permission.read(Role.team(import.meta.env.PUBLIC_APPWRITE_ADMIN_TEAM_ID)),
-      Permission.delete(Role.team(import.meta.env.PUBLIC_APPWRITE_ADMIN_TEAM_ID)),
-      Permission.read(Role.user(user.$id)),
-    ]
-
+      Permission.read(Role.user(user.$id))    ]
 });
 }
