@@ -35,36 +35,41 @@ export default defineConfig({
       sidebar: [
         {
           label: "Getting Started",
+          collapsed: true,
           items: [{ label: "Introduction", slug: "introduction" }],
         },
         {
           label: "Subteams",
+          collapsed: true,
           items: [  
             { label: "Programming", items: [
-              {autogenerate: {directory: "subteams/programming" }}
+              {autogenerate: {directory: "subteams/programming", collapsed: true}}
             ] },
             { label: "Electrical", items: [
-              {autogenerate: {directory: "subteams/electrical" }}
+              {autogenerate: {directory: "subteams/electrical", collapsed: true }}
             ] },
             {
               label: "Mechanical",
+              collapsed: true,
               items: [
                 { label: "Design", items:[
-                  {autogenerate: {directory: "subteams/mechanical/design" }}
+                  {autogenerate: {directory: "subteams/mechanical/design", collapsed: true }}
                 ] },
                 {
                   label: "Fabrication",
+                  collapsed: true,
                   items: [
-                    {autogenerate: {directory: "subteams/mechanical/fabrication" }},
+                    {autogenerate: {directory: "subteams/mechanical/fabrication", collapsed: true }},
                   ],
                 },
                 { label: "Assembly", items: [
-                  {autogenerate: {directory: "subteams/mechanical/assembly" }}
+                  {autogenerate: {directory: "subteams/mechanical/assembly", collapsed: true }}
                 ] },
               ],
             },
             {
               label: "Business",
+              collapsed: true,
               items: [
                 { label: "Media", items: [
                   {autogenerate: {directory: "subteams/business/media" }}
@@ -81,6 +86,7 @@ export default defineConfig({
         },
         {
           label: "Strategy",
+          collapsed: true,
           items: [
             { label: "Scouting", items: [
               {autogenerate: {directory: "strategy/scouting" }}
@@ -92,6 +98,7 @@ export default defineConfig({
         },
         {
           label: "Profile",
+          collapsed: true,
           items: [{ label: "Account", slug: "profile" }]
         },
       ],
