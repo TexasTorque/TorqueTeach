@@ -38,15 +38,6 @@ useEffect(() => {
   };
 }, []);
 
-  async function loadUser() {
-    try {
-      const u = await account.get();
-      setUser(u.name || u.email || "User");
-    } catch {
-      setUser(null); // Guest
-    }
-  }
-
   async function loginWithGoogle() {
     try {
       account.createOAuth2Session({
