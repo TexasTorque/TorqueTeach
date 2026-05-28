@@ -26,7 +26,7 @@ export default function UserProfile() {
       if (!alive) return;
 
       // check admin FIRST using the already-fetched user
-      const isUserAdmin = await checkAdmin(currentUser as any);
+      const isUserAdmin = await checkAdmin();
 
       if (!alive) return;
 
