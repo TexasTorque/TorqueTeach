@@ -26,7 +26,7 @@ export async function createProfileIfNeeded() {
         ]
   });
 
-    if (existing.rows.length > 0) {
+    if ((existing.rows?.length ?? 0) > 0) {
       return;
     }
     await tables.createRow({

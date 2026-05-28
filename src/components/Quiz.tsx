@@ -244,6 +244,11 @@ export default function Quiz({
               >
                 <img
                   src={q.image.src}
+                  alt={
+                    q.image.caption ||
+                    q.question ||
+                    "Quiz supplementary image"
+                  }
                   style={{
                     display: "block",
                     width: "90%",
@@ -351,6 +356,10 @@ export default function Quiz({
                       >
                         <img
                           src={value}
+                          alt={
+                            opt.caption ||
+                            `Answer option for: ${q.question}`
+                          }
                           style={{
                             display:
                               "block",
