@@ -27,7 +27,6 @@ export async function createProfileIfNeeded() {
   });
 
     if (existing.rows.length > 0) {
-        console.log("Profile already exists.");
       return;
     }
     await tables.createRow({
