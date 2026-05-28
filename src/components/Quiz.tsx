@@ -110,11 +110,26 @@ export default function Quiz({
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [score, setScore] = useState<number | null>(null);
   const [submitted, setSubmitted] = useState(false);
+  const [parseError, setParseError] = useState<string | null>(null);
 
   useEffect(() => {
-    const parsed = parseQuiz(content);
-    setQuestions(parsed);
+    try {
+      setParseError(null);
+      const parsed = parseQuiz(content);
+      setQuestions(parsed);
+    } catch (err) {
+      console.error(err);
+      setQuestions([]);
+      setAnswers({});
+      setScore(null);
+      setSubmitted(false);
+      setParseError("Unable to load this quiz because the quiz content is invalid.");
+    }
   }, [content]);
+
+  if (parseError) {
+    return <p style={{ color: "red" }}>{parseError}</p>;
+  }
 
   function setAnswer(i: number, value: string) {
     if (submitted) return;
